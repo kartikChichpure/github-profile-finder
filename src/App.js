@@ -8,31 +8,40 @@ import Search from './components/users/Search';
 
 class App extends Component {
   state = {
-    users : [],
-    loading : false
-  }
+    users: [],
+    loading: false,
+  };
 
-  async componentDidMount(){
+  // async componentDidMount() {
+  //   this.setState({ loading: true });
+
+  //   const res = await axios.get(
+  //     'https://api.github.com/users?client_id=49a82a80c7493536ed79&client_secret=82cb2634f445fbf69c1fe9eed69c81211eb24d6a'
+  //   );
+  //   this.setState({ users: res.data, loading: false });
+  // }
+
+  searchUsers = async (text) => {
     this.setState({ loading: true });
 
-    const res = await axios
-      .get(`https://api.github.com/user?client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`);
+    const res = await axios.get(
+      `https://api.github.com/search/users?q=${text}
+      &client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}
+      &client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`
+    );
+    this.setState({ users: res.data.items, loading: false });
+  };
 
-      this.setState({ users: res.data, loading: false })
-  }
-
-  render(){
+  render() {
     return (
-      <div className="App">
-        
+      <div className='App'>
         <Navbar />
-        <div className="container">
-          <Search/>
-          <Users loading= {this.state.loading} users={this.state.users}/>
+        <div className='container'>
+          <Search searchUsers={this.searchUsers} />
+          <Users loading={this.state.loading} users={this.state.users} />
         </div>
       </div>
     );
-
   }
 }
 
